@@ -2,34 +2,41 @@ from flask import render_template, flash, redirect, url_for
 from app import app
 from app.forms import LoginForm
 from flask_login import current_user, login_user
-from app.models import User
+from app.models import User, get_user, register_user
 from flask_login import logout_user, login_required
 from app.forms import RegistrationForm
 from flask import request
 from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename
 from app import db
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    
+    # set session for image results
+    if "file_urls" not in session:
+        session['file_urls'] = []
+    # list to hold our uploaded image urls
+    file_urls = session['file_urls']    # handle image upload from Dropzone
     if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
-    return render_template("index.html", title='Home Page')
+        file_obj = request.files
+        for f in file_obj:
+            file = request.files.get(f)
+            
+            # save the file with to our photos folder
+            filename = photos.save(
+                file,
+                name=file.filename    
+            )            # append image urls
+            file_urls.append(photos.url(filename))
+            
+        session['file_urls'] = file_urls
+        return "uploading..."    # return dropzone template on GET request    
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -37,7 +44,7 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = get_user(form.username)
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -60,13 +67,23 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
+        register_user(form.username, form.email, form.password)
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/results')
+def results():
+    
+    # redirect to home if no images to display
+    if "file_urls" not in session or session['file_urls'] == []:
+        return redirect(url_for('index'))
+        
+    # set the file_urls and remove the session variable
+    file_urls = session['file_urls']
+    session.pop('file_urls', None)
+    
+    return render_template('results.html', file_urls=file_urls)
 
 def allowed_file(filename):
     return '.' in filename and \

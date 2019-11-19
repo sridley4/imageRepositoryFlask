@@ -8,6 +8,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 def load_user(id):
     return User.query.get(int(id))
 
+def get_user(username):
+    return User.query.filter_by(username=username.data).first()
+
+def register_user(username, email,password):
+    user = User(username.data, email.data)
+    user.set_password(password.data)
+    db.session.add(user)
+    db.session.commit()
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
