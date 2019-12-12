@@ -1,34 +1,72 @@
-from app import login
-from datetime import datetime
 from app import db
-from flask_login import UserMixin
+import time
 from werkzeug.security import generate_password_hash, check_password_hash
 
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
-
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+class User(db.Model):
+    __tablename__ = 'users'
+    email = db.Column(db.String(120), index=True, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    images = db.relationship('Image', backref='author', lazy='dynamic')
 
-    def set_password(self, password):
+    def __init__(self, email, username, password):
+        self.email = email
+        self.username = username
         self.password_hash = generate_password_hash(password)
 
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+    @classmethod
+    def add_user_to_db(cls, data_username, data_email, data_password):
+        user = User(
+            username = data_username,
+            email = data_email,
+            password = data_password
+        )
+        db.session.add(user)
+        db.session.commit()
+    
+    @classmethod
+    def check_user_exist(cls, username):
+        user = cls.query.filter_by(username = username).first()
+        if user is None:
+            return False
+        else:
+            return True
+
+    @classmethod
+    def verify_user_password(cls, username, password):
+        user = cls.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
+            return user
+        else:
+            return None
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+
 class Image(db.Model):
+    __tablename__ = 'image'
     id = db.Column(db.Integer, primary_key=True)
     location = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    timestamp = db.Column(db.DateTime, index=True, default=db.datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    
+    @classmethod
+    def get_all_images_for_user(cls, user):
+        return cls.query.filter_by(user_id=user.id).all()
 
     def __repr__(self):
-        return '<Post {}>'.format(self.body)
+        return '<Image {}>'.format(self.location, self.user_id)
+
+class BlacklistToken(db.Model):
+    __tablename__ = 'blacklist_tokens'
+    id = db.Column(db.Integer, primary_key = True)
+    token = db.Column(db.String(120))
+    
+    def add(self):
+        db.session.add(self)
+        db.session.commit()
+    
+    @classmethod
+    def is_jti_blacklisted(cls, token):
+        query = cls.query.filter_by(token = token).first()
+        return bool(query)
