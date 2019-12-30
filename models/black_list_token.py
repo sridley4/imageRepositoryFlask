@@ -1,7 +1,6 @@
-from app import db
+from db import db
 import time
-from exceptions import TokenNotFound
-from helpers import _epoch_utc_to_datetime
+#from exceptions import TokenNotFound
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy.orm.exc import NoResultFound
@@ -12,7 +11,7 @@ class BlacklistToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.String(36), nullable=False)
     token_type = db.Column(db.String(10), nullable=False)
-    user_identity = db.Column(db.String(50), nullable=False)
+    user_identity = db.Column(db.String(50), db.ForeignKey('users.username'))
     revoked = db.Column(db.Boolean, nullable=False)
     expires = db.Column(db.DateTime, nullable=False)
 
@@ -25,7 +24,7 @@ class BlacklistToken(db.Model):
         decoded_token = decode_token(encoded_token)
         jti = decoded_token['jti']
         token_type = decoded_token['type']
-        user_identity = decoded_token[identity_claim]
+        user_identity = identity_claim
         expires = _epoch_utc_to_datetime(decoded_token['exp'])
         revoked = False
 
@@ -69,11 +68,11 @@ class BlacklistToken(db.Model):
         not exist in the database
         """
         try:
-            token = cls.query.filter_by(id=token_id, user_identity=user).one()
+            token = cls.query.filter_by(jti=token_id, user_identity=user).one()
             token.revoked = True
             db.session.commit()
         except NoResultFound:
-            raise TokenNotFound("Could not find the token {}".format(token_id))
+            raise print("Could not find the token" + token_id + " with user " + user +".")
 
     @classmethod
     def prune_database(cls):
@@ -88,3 +87,12 @@ class BlacklistToken(db.Model):
         for token in expired:
             db.session.delete(token)
         db.session.commit()
+
+from datetime import datetime
+
+def _epoch_utc_to_datetime(epoch_utc):
+        """
+        Helper function for converting epoch timestamps (as stored in JWTs) into
+        python datetime objects (which are easier to use with sqlalchemy).
+        """
+        return datetime.fromtimestamp(epoch_utc)
