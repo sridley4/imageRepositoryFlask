@@ -10,7 +10,7 @@ from schema.image import ImageSchema
 from libs import image_helper
 from models.images import Image
 
-image_reqeust_schema = ImageRequestSchema()
+image_request_schema = ImageRequestSchema()
 
 class ImageUpload(Resource):
     @jwt_required
@@ -22,7 +22,7 @@ class ImageUpload(Resource):
         will be automatically resolved by appending a underscore and a smallest
         unused integer. (eg. filename.png to filename_1.png).
         """
-        data = image_reqeust_schema.load(request.files)
+        data = image_request_schema.load(request.files)
         user_id = get_jwt_identity()
         title = request.form['title']
         try:

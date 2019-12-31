@@ -6,6 +6,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_uploads import configure_uploads, patch_request_class
 from resources.image import ImageUpload, AllImages
+from resources.album import CreateAlbum, GetAllAlbums, GetAlbum
 from libs.image_helper import IMAGE_SET
 
 from resources.registration import UserRegistration
@@ -45,6 +46,9 @@ api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogoutAccess, '/logout/access')
 api.add_resource(ImageUpload, "/upload/image")
 api.add_resource(AllImages, "/allimages")
+api.add_resource(CreateAlbum, "/create_album")
+api.add_resource(GetAllAlbums, "/getalbums")
+api.add_resource(GetAlbum, "/getalbum/<int:album_id>")
 #api.add_resource(UserLogoutRefresh, '/logout/refresh')
 #api.add_resource(TokenRefresh, '/token/refresh')
 
