@@ -1,0 +1,28 @@
+{
+  "image_error_creation": "An error occurred while saving the image.",
+  "image_not_found": "Image '{}' not found.",
+  "image_deleted": "Image '{}' deleted.",
+  "image_uploaded": "Image '{}' uploaded.",
+  "image_illegal_extension": "Extension '{}' is not allowed.",
+  "image_illegal_file_name": "Illegal filename '{}' requested.",
+  "image_delete_failed": "Internal server error! Failed to delete image.",
+  
+
+  "server_error": "Internal Server Error.",
+
+  "album_error_creation": "An error occurred while creating the album",
+  "album_not_found": "Album '{}' not found.",
+  "album_deleted": "Album '{}' deleted.",
+  "album_created": "Album '{}' created.",
+  "album_delete_failed": "Internal server error! Failed to delete album.",
+  "album_unauthorized_access": "Authentication failed. You do not have access to this album.",
+
+  "user_username_exists": "A user with that username already exists.",
+  "user_email_exists": "A user with that email already exists.",
+  "user_not_found": "User not found.",
+  "user_deleted": "User deleted.",
+  "user_invalid_credentials": "Invalid credentials!",
+  "user_logged_out": "User {} successfully logged out and tokens revoked.",
+  "user_error_creating": "Internal server error. Failed to create user.",
+  "user_registered": "Account created successfully."
+}
