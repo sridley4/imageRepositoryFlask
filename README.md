@@ -5,3 +5,7 @@ Image Flask Repository is a microservice restful api where people can create acc
 Production like setup uses Gunicorn as the WSGI interface for flask and Nginx as the web server for the web application.
 
 Database used is Postgresql for both production and development setup.
+
+TODO's
+- Add react frontend and update docker containers
+- Add JWT double submit authentication for protection as currently there is no way to authenticate that the JWT is being used by the user. NOTE will require creating unique json objects for flask-restful as it does not work with flask jsonify, Flask-restful json is based off of python json library and not flask json
