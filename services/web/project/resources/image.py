@@ -17,11 +17,7 @@ class ImageUpload(Resource):
     @jwt_required
     def post(self):
         """
-        This endpoint is used to upload an image file. It uses the
-        JWT to retrieve user information and save the image in the user's folder.
-        If a file with the same name exists in the user's folder, name conflicts
-        will be automatically resolved by appending a underscore and a smallest
-        unused integer. (eg. filename.png to filename_1.png).
+        This endpoint is used to upload an image file. An image file must be included in the post along with a title
         """
         data = image_request_schema.load(request.files)
         user_id = get_jwt_identity()
@@ -44,6 +40,9 @@ image_schema = ImageSchema(many=True, only=("id", "title", "url_location"))
 class AllImages(Resource):
     @jwt_required
     def get(self):
+        """
+        Gets all the images associated with the users jwt
+        """
         user_id = get_jwt_identity()
         user_images = Image.get_all_images_for_user(user_id)
         

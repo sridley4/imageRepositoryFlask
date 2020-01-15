@@ -13,6 +13,15 @@ class UserRegistration(Resource):
     
     @classmethod
     def post(cls):
+        """
+        Allows the cleint to create a user account
+        Example json attached to post:
+        {
+	        "username":"hello",
+	        "email":"email@exmaple",
+	        "password":"password"
+        }
+        """
         user_json = request.get_json()
         try:
             user = user_schema.load(user_json)

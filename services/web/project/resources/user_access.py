@@ -12,6 +12,14 @@ user_schema = UserSchema()
 class UserLogin(Resource):
 
     def post(self):
+        """
+        Allows the user to login provided they have correct credentials
+        Example of json is:
+        {
+	        "username":"test_user",
+	        "password":"password"
+        }
+        """
         user_json = request.get_json()
         user_data = user_schema.load(user_json, partial=("email",))
 
@@ -37,6 +45,9 @@ class UserLogin(Resource):
 class UserLogoutAccess(Resource):
     @jwt_required
     def get(self):
+        """
+        Allows the user to logout, it revokes the associated token
+        """
         token_id = get_raw_jwt()['jti']
         user_identity = get_jwt_identity()
         try:
@@ -52,7 +63,10 @@ class UserLogoutAccess(Resource):
 
 class UserLogoutRefresh(Resource):
     @jwt_refresh_token_required
-    def post(self):
+    def get(self):
+        """
+        Allows the user to get a new access token provided they have non expired refresh token
+        """
         jti = get_raw_jwt()['jti']
         try:
             revoked_token = BlacklistToken(jti = jti)

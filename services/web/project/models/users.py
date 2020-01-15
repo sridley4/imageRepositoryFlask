@@ -15,14 +15,23 @@ class UserModel(db.Model):
 
     @classmethod
     def find_by_username(cls, username):
+        """
+        Finds the user by username
+        """
         return cls.query.filter_by(username=username).first()
     
     @classmethod
     def find_by_email(cls, email):
+        """
+        Finds the user by email
+        """
         return cls.query.filter_by(email=email).first()
 
     @classmethod
     def authenticate_user(cls, username, password):
+        """
+        Checks if the corrects username and password were entered
+        """
         user = cls.find_by_username(username)
         if user is not None and check_password_hash(user.password, password):
             return user

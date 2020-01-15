@@ -16,10 +16,16 @@ class Image(db.Model):
     
     @classmethod
     def get_all_images_for_user(cls, user):
+        """
+        Queries for the images by user
+        """
         return cls.query.filter_by(username=user).all()
     
     @classmethod
     def get_image_by_id(cls, id):
+        """
+        Returns the image with the associated id
+        """
         return cls.query.filter_by(id=id).first()
     
     def save_to_db(self):
@@ -27,4 +33,4 @@ class Image(db.Model):
         db.session.commit()
     
     def __repr__(self):
-        return '<Image {}>'.format(self.location, self.user_id)
+        return '<Image {}>'.format(self.location, self.username)

@@ -18,6 +18,15 @@ album_request_schema = AlbumCreateRequest()
 class CreateAlbum(Resource):
     @jwt_required
     def post(self):
+        """
+        Creates the album with the information provided by the client
+        required are title, and image_id_list: list of image ids
+        Example of post json is
+        {
+	        "title":"secondalbum",
+	        "image_id_list":[2,3]
+        }
+        """
         user_id = get_jwt_identity()
         
         try:
@@ -42,6 +51,9 @@ albums_schema = AlbumSchema(many=True, only=("id", "title", "first_image_locatio
 class GetAllAlbums(Resource):
     @jwt_required
     def get(self):
+        """
+        Gets all associated albums connected to user
+        """
         user_id = get_jwt_identity()
         
 
@@ -62,6 +74,9 @@ class GetAlbum(Resource):
     @classmethod
     @jwt_required
     def get(cls, album_id: int):
+        """
+        Gets specific album passed by album id
+        """
         album = Album.get_album_by_id(album_id)
 
         user_id = get_jwt_identity()
