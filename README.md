@@ -13,6 +13,8 @@ To deploy to development run the following
 ```
 docker-compose up -d --build
 ```
+and go to http://localhost:5000 and hit one of the endpoints
+
 To run tests in development run the following
 ```
 docker-compose exec web python manage.py seed_db
@@ -23,6 +25,7 @@ To deploy with nginx and gunicorn run the following
 docker-compose -f docker-compose.prod.yaml up -d --build
 docker-compose exec web python manage.py create_db
 ```
+and go to http://localhost:1337 and hit one of the endpoints
 
 TODO's when I get time
 - Add react frontend and update docker containers
