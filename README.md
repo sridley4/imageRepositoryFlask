@@ -9,6 +9,21 @@ Database used is Postgresql for both production and development setup.
 
 <img src="https://i.morioh.com/fb42517ac4.png" width=400><img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg" width=200><img src="https://www.docker.com/sites/default/files/d8/2019-07/vertical-logo-monochromatic.png" width=200><img src="https://www.nginx.com/wp-content/uploads/2018/08/NGINX-logo-rgb-large.png" width=400><img src="https://www.fullstackpython.com/img/logos/gunicorn.jpg" width=600>
 
+To deploy to development run the following
+```
+docker-compose up -d --build
+```
+To run tests in development run the following
+```
+docker-compose exec web python manage.py seed_db
+docker-compose exec web python manage.py run_tests
+```
+To deploy with nginx and gunicorn run the following
+```
+docker-compose -f docker-compose.prod.yaml up -d --build
+docker-compose exec web python manage.py create_db
+```
+
 TODO's when I get time
 - Add react frontend and update docker containers
 - Add JWT double submit authentication for protection as currently there is no way to authenticate that the JWT is being used by the user. NOTE will require creating unique json objects for flask-restful as it does not work with flask jsonify, Flask-restful json is based off of python json library and not flask json
