@@ -1,6 +1,5 @@
 from project.db import db
 import time
-#from exceptions import TokenNotFound
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy.orm.exc import NoResultFound
@@ -64,8 +63,7 @@ class BlacklistToken(db.Model):
     @classmethod
     def revoke_token(cls, token_id, user):
         """
-        Revokes the given token. Raises a TokenNotFound error if the token does
-        not exist in the database
+        Revokes the given token.
         """
         try:
             token = cls.query.filter_by(jti=token_id, user_identity=user).one()
@@ -78,9 +76,6 @@ class BlacklistToken(db.Model):
     def prune_database(cls):
         """
         Delete tokens that have expired from the database.
-        How (and if) you call this is entirely up you. You could expose it to an
-        endpoint that only administrators could call, you could run it as a cron,
-        set it up with flask cli, etc.
         """
         now = datetime.now()
         expired = cls.query.filter(cls.expires < now).all()

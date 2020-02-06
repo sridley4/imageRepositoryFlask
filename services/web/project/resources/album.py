@@ -44,7 +44,7 @@ class CreateAlbum(Resource):
             return {"message": gettext("album_created").format(data['title'])}, 201
         except:
             traceback.print_exc()
-            return {"message": gettext("album_error_creation")}, 400
+            return {"message": gettext("album_error_creation")}, 500
 
 albums_schema = AlbumSchema(many=True, only=("id", "title", "first_image_location"))
 
@@ -64,7 +64,7 @@ class GetAllAlbums(Resource):
             return {"albums": albums},201
         except:
             traceback.print_exc()
-            return {"message": "rip"}, 400
+            return {"message": gettext("album_error_retrieval")}, 500
 
 
 album_schema = AlbumSchema(only=("title", "id"))
@@ -84,12 +84,12 @@ class GetAlbum(Resource):
         album_images=Album.get_all_images(album_id)
 
         if(album.username!=user_id):
-            return {'message': "This is not your album."}, 401
+            return {'message': gettext("album_unauthorized_access")}, 401
 
         album_result = album_schema.dump(album)
         images_result = image_schema.dump(album_images)
         try: 
             return{'album': album_result, 'images': images_result}, 201
         except:
-            return {"message": "rip"}
+            return {"message": gettext("album_error_retrieval")}, 500
         

@@ -11,7 +11,6 @@ albums_to_images = db.Table('albums_to_images',
 class Album(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(140))
-    # timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
     username = db.Column(db.String(140), db.ForeignKey('users.username'))
     first_image_location = db.Column(db.String(140))
     images = db.relationship('Image', secondary=albums_to_images, backref=db.backref('album_images', lazy='dynamic'))

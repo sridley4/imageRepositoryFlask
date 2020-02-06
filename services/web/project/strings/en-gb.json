@@ -14,6 +14,7 @@
   "album_not_found": "Album '{}' not found.",
   "album_deleted": "Album '{}' deleted.",
   "album_created": "Album '{}' created.",
+  "album_error_retrieval": "Error occured while retrieving albums.",
   "album_delete_failed": "Internal server error! Failed to delete album.",
   "album_unauthorized_access": "Authentication failed. You do not have access to this album.",
 
