@@ -2,21 +2,24 @@ import os
 import re
 from werkzeug.datastructures import FileStorage
 import uuid
+from werkzeug.utils import secure_filename
 
-from flask_uploads import UploadSet, IMAGES
+ALLOWED_EXTENSIONS = { 'png', 'jpg', 'jpeg', 'gif'}
 
-IMAGE_SET = UploadSet("images", IMAGES)  # set name and allowed extensions
+UPLOAD_FOLDER = f"{os.getenv('APP_FOLDER')}/project/static/"
 
 
-def save_image(image: FileStorage, folder: str = None, name: str = None) -> str:
+def save_image(file: FileStorage) -> str:
     """
     This method stores the image
     param: the file, the folder name, the name of the file
     return: the path to where the image was saved
     """
-    name = str(uuid.uuid4()) + get_extension(image.filename)
-    return IMAGE_SET.save(image, folder, name)
+    name = str(uuid.uuid4()) + get_extension(file.filename)
 
+    filename = secure_filename(name)
+    file.save(os.path.join(UPLOAD_FOLDER, filename))
+    return str(UPLOAD_FOLDER + name)
 
 def get_extension(filename):
     """

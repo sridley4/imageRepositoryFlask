@@ -69,7 +69,7 @@ class TestAlbumService(unittest.TestCase):
         response = tester.get("/get_album/1", headers=access_headers)
         json_data = response.get_json()
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(json_data['message'], "This is not your album.")
+        self.assertEqual(json_data['message'], "Authentication failed. You do not have access to this album.")
         
 
 
